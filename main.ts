@@ -4,7 +4,22 @@ const kv = await Deno.openKv();
 // 使用一个固定的 key 来存储目标 URL
 const TARGET_KEY = ["targetUrl"];
 
+// 设置允许跨域
+const headers = new Headers();
+headers.set("Access-Control-Allow-Origin", "*");
+headers.set("Access-Control-Allow-Headers", "*");
+headers.set("Access-Control-Allow-Methods", "*");
+headers.set("Access-Control-Allow-Credentials", "true");
+headers.set("Access-Control-Expose-Headers", "*");
+// 设置 OPTIONS 请求的响应
+
 Deno.serve(async (req) => {
+  // 处理预检请求
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
+      headers,
+    });
+  }
   const url = new URL(req.url);
 
   // 如果请求带有 setUrl 参数，则更新目标 URL
